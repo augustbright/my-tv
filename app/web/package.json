@@ -1,4 +1,7 @@
 {
   "name": "web",
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "devDependencies": {
+    "@types/express-session": "^1.18.0"
+  }
 }
