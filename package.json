@@ -13,11 +13,13 @@
   "devDependencies": {
     "@eslint/compat": "^1.1.1",
     "@eslint/js": "^9.8.0",
+    "@nestjs/schematics": "^10.0.1",
     "@nx/cypress": "19.8.0",
     "@nx/eslint": "19.8.0",
     "@nx/eslint-plugin": "19.8.0",
     "@nx/jest": "19.8.0",
     "@nx/js": "19.8.0",
+    "@nx/nest": "19.8.0",
     "@nx/next": "19.8.0",
     "@swc-node/register": "~1.9.1",
     "@swc/cli": "~0.3.12",
