@@ -11,25 +11,24 @@ import next from 'next';
 import express from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import type { Request, Response } from 'express';
+import {getEnvVar} from 'server-utils';
 
 // Next.js server options:
 // - The environment variable is set by `@nx/next:server` when running the dev server.
 // - The fallback `__dirname` is for production builds.
 // - Feel free to change this to suit your needs.
 
-const dir =
-  process.env.NX_NEXT_DIR ?? path.join(__dirname, '../../../../app/web');
-const dev = process.env.NODE_ENV === 'development';
-
+const dir = path.join(__dirname, '../../../app/web');
+const dev = getEnvVar('NODE_ENV') === 'development';
 // HTTP Server options:
 // - Feel free to change this to suit your needs.
-const hostname = process.env.SERVICE_WEB_HOSTNAME ?? 'localhost';
-const port = process.env.SERVICE_WEB_PORT ? parseInt(process.env.SERVICE_WEB_PORT) : 4200;
-const apiPrefix = process.env.SERVICE_WEB_API_PREFIX ?? 'api';
+const hostname = getEnvVar('SERVICE_WEB_HOSTNAME');
+const port = parseInt(getEnvVar('SERVICE_WEB_PORT'));
+const apiPrefix = getEnvVar('SERVICE_WEB_API_PREFIX');
 
-const backendHostname = process.env.SERVICE_BACKEND_HOSTNAME ?? 'localhost';
-const backendPort = process.env.SERVICE_BACKEND_PORT ? parseInt(process.env.SERVICE_BACKEND_PORT) : 3000;
-const backendGlobalPrefix = process.env.SERVICE_BACKEND_GLOBAL_PREFIX ?? 'api';
+const backendHostname = getEnvVar('SERVICE_BACKEND_HOSTNAME');
+const backendPort = getEnvVar('SERVICE_BACKEND_PORT');
+const backendGlobalPrefix = getEnvVar('SERVICE_BACKEND_GLOBAL_PREFIX');
 
 const proxyBackendMiddleware = createProxyMiddleware<Request, Response>({
   target: `http://${backendHostname}:${backendPort}/${backendGlobalPrefix}`,

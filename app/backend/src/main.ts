@@ -7,11 +7,12 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';
+import {getEnvVar} from 'server-utils';
 
 async function bootstrap() {
-  const globalPrefix = process.env.SERVICE_BACKEND_GLOBAL_PREFIX ?? 'api';
-  const port = process.env.SERVICE_BACKEND_PORT ?? 3000;
-  const hostname = process.env.SERVICE_BACKEND_HOSTNAME ?? 'localhost';
+  const globalPrefix = getEnvVar('SERVICE_BACKEND_GLOBAL_PREFIX');
+  const port = getEnvVar('SERVICE_BACKEND_PORT');
+  const hostname = getEnvVar('SERVICE_BACKEND_HOSTNAME');
 
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix(globalPrefix);

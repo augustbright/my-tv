@@ -1,0 +1,19 @@
+{
+  "name": "server-utils",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "app/utils/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/app/utils",
+        "main": "app/utils/src/index.ts",
+        "tsConfig": "app/utils/tsconfig.lib.json",
+        "assets": ["app/utils/*.md"]
+      }
+    }
+  }
+}

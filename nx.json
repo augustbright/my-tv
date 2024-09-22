@@ -1,4 +1,9 @@
 {
+  "pluginsConfig": {
+    "@nx/js": {
+      "analyzeSourceFiles": true
+    }
+  },
   "extends": "nx/presets/npm.json",
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "nxCloudId": "66ef1f738c87b339c243e832",
@@ -45,6 +50,12 @@
         "serveTargetName": "serve",
         "previewTargetName": "preview"
       }
+    },
+    {
+      "plugin": "@nx/rollup/plugin",
+      "options": {
+        "buildTargetName": "build"
+      }
     }
   ],
   "targetDefaults": {
@@ -53,6 +64,11 @@
     },
     "build-custom-server": {
       "cache": true
+    },
+    "@nx/js:tsc": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"]
     }
   },
   "generators": {

@@ -9,14 +9,11 @@
       "dependsOn": ["^build", "build-custom-server"]
     },
     "build-custom-server": {
-      "executor": "@nx/js:tsc",
+      "executor": "@nx/webpack:webpack",
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/app/web",
-        "main": "app/web/server/main.ts",
-        "tsConfig": "app/web/tsconfig.server.json",
-        "clean": false,
-        "assets": []
+        "webpackConfig": "app/web/webpack.config.js"
       },
       "configurations": {
         "development": {},
