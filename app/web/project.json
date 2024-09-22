@@ -9,7 +9,7 @@
       "dependsOn": ["^build", "build-custom-server"]
     },
     "build-custom-server": {
-      "executor": "@nx/js:swc",
+      "executor": "@nx/js:tsc",
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/app/web",
