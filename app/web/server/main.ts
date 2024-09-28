@@ -11,7 +11,7 @@ import next from 'next';
 import express from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import type { Request, Response } from 'express';
-import {getEnvVar} from 'server-utils';
+import { getEnvVar } from 'server-utils';
 
 // Next.js server options:
 // - The environment variable is set by `@nx/next:server` when running the dev server.
@@ -24,10 +24,12 @@ const dev = getEnvVar('NODE_ENV') === 'development';
 // - Feel free to change this to suit your needs.
 const hostname = getEnvVar('SERVICE_WEB_HOSTNAME');
 const port = parseInt(getEnvVar('SERVICE_WEB_PORT'));
-const apiPrefix = getEnvVar('SERVICE_WEB_API_PREFIX');
+const apiPrefix = getEnvVar('NEXT_PUBLIC_SERVICE_WEB_API_PREFIX');
+const wsPrefix = getEnvVar('NEXT_PUBLIC_SERVICE_WEB_WS_PREFIX');
 
 const backendHostname = getEnvVar('SERVICE_BACKEND_HOSTNAME');
 const backendPort = getEnvVar('SERVICE_BACKEND_PORT');
+const backendWsPort = getEnvVar('SERVICE_BACKEND_WS_PORT');
 const backendGlobalPrefix = getEnvVar('SERVICE_BACKEND_GLOBAL_PREFIX');
 
 const proxyBackendMiddleware = createProxyMiddleware<Request, Response>({
@@ -35,14 +37,20 @@ const proxyBackendMiddleware = createProxyMiddleware<Request, Response>({
   changeOrigin: true,
 });
 
+const proxyBackendWSMiddleware = createProxyMiddleware<Request, Response>({
+  target: `http://${backendHostname}:${backendWsPort}/${backendGlobalPrefix}`,
+  changeOrigin: true,
+});
+
 async function main() {
-  const expressApp = express()
+  const expressApp = express();
   const nextApp = next({ dev, dir });
   const handle = nextApp.getRequestHandler();
 
   await nextApp.prepare();
 
   expressApp.use(`/${apiPrefix}`, proxyBackendMiddleware);
+  expressApp.use(`/${wsPrefix}`, proxyBackendWSMiddleware);
 
   expressApp.use((req, res) => {
     const parsedUrl = parse(req.url ?? '', true);

@@ -3,23 +3,30 @@
  * This is only a minimal backend to get started.
  */
 
-import { Logger } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import express from 'express';
+import { getEnvVar } from 'server-utils';
+import expressWs from 'express-ws';
+import { apiRouter } from './api';
+import cookieParser from 'cookie-parser';
 
-import { AppModule } from './app/app.module';
-import {getEnvVar} from 'server-utils';
+const port = getEnvVar('SERVICE_BACKEND_PORT');
+const hostname = getEnvVar('SERVICE_BACKEND_HOSTNAME');
+const globalPrefix = getEnvVar('SERVICE_BACKEND_GLOBAL_PREFIX');
 
-async function bootstrap() {
-  const globalPrefix = getEnvVar('SERVICE_BACKEND_GLOBAL_PREFIX');
-  const port = getEnvVar('SERVICE_BACKEND_PORT');
-  const hostname = getEnvVar('SERVICE_BACKEND_HOSTNAME');
+const { app } = expressWs(express());
 
-  const app = await NestFactory.create(AppModule);
-  app.setGlobalPrefix(globalPrefix);
-  await app.listen(port);
-  Logger.log(
-    `🚀 Backend service is running on: http://${hostname}:${port}/${globalPrefix}`
-  );
-}
+app.use(express.json());
+app.use(cookieParser());
 
-bootstrap();
+app.ws('/echo', function (ws, req) {
+  ws.on('message', function (msg) {
+    ws.send(msg);
+  });
+});
+
+app.use(`/${getEnvVar('SERVICE_BACKEND_GLOBAL_PREFIX')}`, apiRouter);
+
+const server = app.listen(port, () => {
+  console.log(`Listening at http://${hostname}:${port}/${globalPrefix}`);
+});
+server.on('error', console.error);
