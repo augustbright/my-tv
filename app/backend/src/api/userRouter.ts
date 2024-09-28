@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAuth } from 'firebase-admin/auth';
+import { getAuth, DecodedIdToken } from 'firebase-admin/auth';
 import { firebaseApp } from '../firebase';
 
 export const userRouter = Router();
@@ -18,10 +18,10 @@ userRouter.post('/sessionLogin', async (req, res) => {
 });
 
 userRouter.get('/current', async (req, res) => {
-  const sessionCookie = req.cookies.session || '';
-  const decodedClaims = await getAuth(firebaseApp).verifySessionCookie(
-    sessionCookie,
-    true
-  );
-  res.json(decodedClaims);
+  res.json(req.user);
+});
+
+userRouter.post('/sign-out', async (req, res) => {
+  res.clearCookie('session');
+  res.end(JSON.stringify({ status: 'success' }));
 });

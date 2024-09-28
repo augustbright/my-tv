@@ -3,5 +3,6 @@ export const API = {
   user: (route: string) => API.api(`/user${route}`),
   verifyToken: () => API.user(`/verifyToken`),
   sessionLogin: () => API.user('/sessionLogin'),
+  signOut: () => API.user('/sign-out'),
   currentUser: () => API.user('/current'),
 };

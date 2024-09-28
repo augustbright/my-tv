@@ -8,6 +8,7 @@ import { getEnvVar } from 'server-utils';
 import expressWs from 'express-ws';
 import { apiRouter } from './api';
 import cookieParser from 'cookie-parser';
+import { verifySessionMiddleware } from './middleware/verifySession';
 
 const port = getEnvVar('SERVICE_BACKEND_PORT');
 const hostname = getEnvVar('SERVICE_BACKEND_HOSTNAME');
@@ -15,8 +16,7 @@ const globalPrefix = getEnvVar('SERVICE_BACKEND_GLOBAL_PREFIX');
 
 const { app } = expressWs(express());
 
-app.use(express.json());
-app.use(cookieParser());
+app.use(express.json(), cookieParser(), verifySessionMiddleware);
 
 app.ws('/echo', function (ws, req) {
   ws.on('message', function (msg) {

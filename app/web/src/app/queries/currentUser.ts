@@ -1,10 +1,10 @@
-import { isServer } from '@tanstack/react-query';
-import { FetchQueryOptions } from '@tanstack/react-query';
+import { isServer, FetchQueryOptions, useQuery } from '@tanstack/react-query';
 import { apiClient, API } from '../api';
 import { AxiosRequestConfig } from 'axios';
+import { KEY } from './keys';
 
 export const queryCurrentUser = (): FetchQueryOptions => ({
-  queryKey: ['current user'],
+  queryKey: KEY.CURRENT_USER,
   queryFn: async () => {
     let headers: AxiosRequestConfig | undefined;
     if (isServer) {
@@ -16,3 +16,5 @@ export const queryCurrentUser = (): FetchQueryOptions => ({
     return data;
   },
 });
+
+export const useQueryCurrentUser = () => useQuery(queryCurrentUser());
