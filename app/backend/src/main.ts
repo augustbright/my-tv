@@ -9,6 +9,7 @@ import expressWs from 'express-ws';
 import { apiRouter } from './api';
 import cookieParser from 'cookie-parser';
 import { verifySessionMiddleware } from './middleware/verifySession';
+import { socketsService } from './service/socketsService';
 
 const port = getEnvVar('SERVICE_BACKEND_PORT');
 const hostname = getEnvVar('SERVICE_BACKEND_HOSTNAME');
@@ -18,10 +19,14 @@ const { app } = expressWs(express());
 
 app.use(express.json(), cookieParser(), verifySessionMiddleware);
 
-app.ws('/echo', function (ws, req) {
-  ws.on('message', function (msg) {
-    ws.send(msg);
-  });
+app.ws('/connect', function (ws, req) {
+  if (req.user) {
+    console.log('connected');
+    socketsService.initSocket(ws, req.user);
+  } else {
+    console.log('not connected');
+    ws.close();
+  }
 });
 
 app.use(`/${getEnvVar('SERVICE_BACKEND_GLOBAL_PREFIX')}`, apiRouter);
