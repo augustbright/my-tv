@@ -18,7 +18,8 @@ export const mutateSignInWithGoogle =
     mutationFn: async () => {
       const userCredential = await signInWithPopup(auth, googleProvider);
       const idToken = await userCredential.user.getIdToken();
-      const result = await apiClient.post(API.sessionLogin(), { idToken });
+      await apiClient.post(API.sessionLogin(), { idToken });
+
       getQueryClient().invalidateQueries({
         queryKey: KEY.CURRENT_USER,
       });

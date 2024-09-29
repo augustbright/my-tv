@@ -4,5 +4,8 @@
         "statusBar.background": "#4F6A0A",
         "statusBar.foreground": "#ffffff"
     },
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "cSpell.words": [
+        "toastify"
+    ]
 }

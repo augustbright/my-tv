@@ -2,34 +2,9 @@
 import './firebase';
 import { useAuthentication } from './auth/useAuthentication';
 import { Button } from '@/components/ui/Button';
-import { w3cwebsocket as W3CWebSocket } from 'websocket';
-import { useState } from 'react';
 
 export default function Index() {
   const auth = useAuthentication();
-  const [wsClient] = useState(() => {
-    const client = new W3CWebSocket(
-      'ws://localhost:3101/connect',
-      'echo-protocol'
-    );
-    client.onerror = function () {
-      console.log('Connection Error');
-    };
-
-    client.onopen = function () {
-      console.log('WebSocket Client Connected');
-    };
-
-    client.onclose = function () {
-      console.log('echo-protocol Client Closed');
-    };
-
-    client.onmessage = function (e) {
-      if (typeof e.data === 'string') {
-        console.log("Received: '" + e.data + "'");
-      }
-    };
-  });
 
   return (
     <div>

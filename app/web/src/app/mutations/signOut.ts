@@ -6,6 +6,7 @@ import { KEY } from '../queries/keys';
 export const mutateSignOut = (): UseMutationOptions => ({
   mutationFn: async () => {
     await apiClient.post(API.signOut());
+
     getQueryClient().invalidateQueries({
       queryKey: KEY.CURRENT_USER,
     });

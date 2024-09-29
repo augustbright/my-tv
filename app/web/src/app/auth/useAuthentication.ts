@@ -3,6 +3,8 @@ import { auth } from '../firebase';
 import { useMutateSignInWithGoogle } from '../mutations/signInWithGoogle';
 import { useMutateSignOut } from '../mutations/signOut';
 import { useQueryCurrentUser } from '../queries/currentUser';
+import { useEffect } from 'react';
+import { ws } from '../websocket';
 
 export const useAuthentication = () => {
   const [, loadingAuthState] = useAuthState(auth);
@@ -13,6 +15,15 @@ export const useAuthentication = () => {
     isPending: isSigningInWithGoogle,
     error: errorWithGoogle,
   } = useMutateSignInWithGoogle();
+
+  useEffect(() => {
+    if (user && !ws.isConnected) {
+      ws.connect();
+    }
+    if (!user && ws.isConnected) {
+      ws.disconnect();
+    }
+  }, [user]);
 
   const signOut = useMutateSignOut();
 

@@ -1,5 +1,6 @@
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 import './global.css';
+import 'react-toastify/dist/ReactToastify.css';
 import { Providers } from './Providers';
 import { queryCurrentUser } from './queries/currentUser';
 import { getQueryClient } from './queries/queryClient';
@@ -18,12 +19,14 @@ export default async function RootLayout({
   await queryClient.prefetchQuery(queryCurrentUser());
 
   return (
-    <Providers>
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <html lang="en">
-          <body>{children}</body>
-        </html>
-      </HydrationBoundary>
-    </Providers>
+    <html lang="en">
+      <body>
+        <Providers>
+          <HydrationBoundary state={dehydrate(queryClient)}>
+            {children}
+          </HydrationBoundary>
+        </Providers>
+      </body>
+    </html>
   );
 }

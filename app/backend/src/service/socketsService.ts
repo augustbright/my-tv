@@ -1,9 +1,5 @@
 import WebSocket from 'ws';
-
-type TMessage = {
-  type: string;
-  payload: any;
-};
+import { TMessage } from 'types';
 
 export const socketsService = {
   connections: new Map<

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAuth, DecodedIdToken } from 'firebase-admin/auth';
+import { getAuth } from 'firebase-admin/auth';
 import { firebaseApp } from '../firebase';
 
 export const userRouter = Router();

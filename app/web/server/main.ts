@@ -25,22 +25,23 @@ const dev = getEnvVar('NODE_ENV') === 'development';
 const hostname = getEnvVar('SERVICE_WEB_HOSTNAME');
 const port = parseInt(getEnvVar('SERVICE_WEB_PORT'));
 const apiPrefix = getEnvVar('NEXT_PUBLIC_SERVICE_WEB_API_PREFIX');
-const wsPrefix = getEnvVar('NEXT_PUBLIC_SERVICE_WEB_WS_PREFIX');
+// const wsPrefix = getEnvVar('NEXT_PUBLIC_SERVICE_WEB_WS_PREFIX');
 
 const backendHostname = getEnvVar('SERVICE_BACKEND_HOSTNAME');
 const backendPort = getEnvVar('SERVICE_BACKEND_PORT');
-const backendWsPort = getEnvVar('SERVICE_BACKEND_WS_PORT');
+// const backendWsPort = getEnvVar('SERVICE_BACKEND_WS_PORT');
 const backendGlobalPrefix = getEnvVar('SERVICE_BACKEND_GLOBAL_PREFIX');
+// const backendWsPrefix = getEnvVar('SERVICE_BACKEND_WS_PREFIX');
 
 const proxyBackendMiddleware = createProxyMiddleware<Request, Response>({
   target: `http://${backendHostname}:${backendPort}/${backendGlobalPrefix}`,
   changeOrigin: true,
 });
 
-const proxyBackendWSMiddleware = createProxyMiddleware<Request, Response>({
-  target: `http://${backendHostname}:${backendWsPort}/${backendGlobalPrefix}`,
-  changeOrigin: true,
-});
+// const proxyBackendWSMiddleware = createProxyMiddleware<Request, Response>({
+//   target: `ws://${backendHostname}:${backendWsPort}/${backendWsPrefix}`,
+//   changeOrigin: true,
+// });
 
 async function main() {
   const expressApp = express();
@@ -50,7 +51,7 @@ async function main() {
   await nextApp.prepare();
 
   expressApp.use(`/${apiPrefix}`, proxyBackendMiddleware);
-  expressApp.use(`/${wsPrefix}`, proxyBackendWSMiddleware);
+  // expressApp.use(`/${wsPrefix}`, proxyBackendWSMiddleware);
 
   expressApp.use((req, res) => {
     const parsedUrl = parse(req.url ?? '', true);

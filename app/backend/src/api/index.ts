@@ -14,7 +14,10 @@ apiRouter.use('/media', mediaRouter);
 
 apiRouter.get('/send/:uid/:message', async (req, res) => {
   const { uid, message } = req.params;
-  const sent = await socketsService.sendToUser(uid, message);
+  const sent = await socketsService.sendToUser(uid, {
+    type: 'dummy-notification',
+    message,
+  });
   res.send({ sent });
 });
 

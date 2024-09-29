@@ -14,12 +14,13 @@ import { socketsService } from './service/socketsService';
 const port = getEnvVar('SERVICE_BACKEND_PORT');
 const hostname = getEnvVar('SERVICE_BACKEND_HOSTNAME');
 const globalPrefix = getEnvVar('SERVICE_BACKEND_GLOBAL_PREFIX');
+const wsPrefix = getEnvVar('SERVICE_BACKEND_WS_PREFIX');
 
 const { app } = expressWs(express());
 
 app.use(express.json(), cookieParser(), verifySessionMiddleware);
 
-app.ws('/connect', function (ws, req) {
+app.ws(`/${wsPrefix}`, function (ws, req) {
   if (req.user) {
     console.log('connected');
     socketsService.initSocket(ws, req.user);
