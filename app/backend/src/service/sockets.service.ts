@@ -1,12 +1,12 @@
 import WebSocket from 'ws';
-import { TMessage } from 'types';
+import { TMessage, TUser } from 'types';
 
 export const socketsService = {
   connections: new Map<
     string,
     {
       ws: WebSocket;
-      user: any;
+      user: TUser;
     }
   >(),
   initSocket(ws: WebSocket, user) {

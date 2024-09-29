@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { mediaService } from '../service/media.service';
 import fileUpload from 'express-fileupload';
+import { randomUUID } from 'crypto';
+import { socketsService } from '../service/sockets.service';
 
 export const mediaRouter = Router();
 
@@ -15,7 +17,6 @@ mediaRouter.post(
     },
   }),
   async (req, res) => {
-    console.log('req.files:', req.files);
     let file = req.files?.file;
     if (!file) {
       res.status(400).send('No files were uploaded.');
@@ -24,7 +25,31 @@ mediaRouter.post(
     if (Array.isArray(file)) {
       file = file[0];
     }
-    const result = await mediaService.upload(file);
-    res.json(result);
+    const jobId = randomUUID();
+    mediaService
+      .upload(file, {
+        onProgress(percent) {
+          socketsService.sendToUser(req.user.uid, {
+            type: 'upload-progress',
+            jobId,
+            percent,
+          });
+        },
+      })
+      .then(() => {
+        socketsService.sendToUser(req.user.uid, {
+          type: 'upload-finished',
+          jobId,
+        });
+      })
+      .catch((error) => {
+        socketsService.sendToUser(req.user.uid, {
+          type: 'upload-error',
+          jobId,
+          error: error.message,
+        });
+        throw error;
+      });
+    res.send({ jobId });
   }
 );
