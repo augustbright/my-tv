@@ -4,7 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Providers } from './Providers';
 import { queryCurrentUser } from './queries/currentUser';
 import { getQueryClient } from './queries/queryClient';
-import { RootLayout } from '@/components/RootLayout';
+import { AppHeader } from './AppHeader';
 
 export const metadata = {
   title: 'Welcome to web',
@@ -24,7 +24,10 @@ export default async function Layout({
       <body>
         <Providers>
           <HydrationBoundary state={dehydrate(queryClient)}>
-            <RootLayout>{children}</RootLayout>
+            <div className="flex flex-col">
+              <AppHeader />
+              {children}
+            </div>
           </HydrationBoundary>
         </Providers>
       </body>

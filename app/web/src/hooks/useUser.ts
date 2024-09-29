@@ -3,6 +3,7 @@ import { useMutateSignOut } from '../app/mutations/signOut';
 import { useQueryCurrentUser } from '../app/queries/currentUser';
 import { useEffect } from 'react';
 import { ws } from '../app/websocket';
+import { redirect } from 'next/navigation';
 
 export const useUser = () => {
   const { data: current } = useQueryCurrentUser();
