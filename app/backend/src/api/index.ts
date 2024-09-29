@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { userRouter } from './userRouter';
-import { mediaRouter } from './mediaRouter';
-import { socketsService } from '../service/socketsService';
+import { userRouter } from './user-router';
+import { mediaRouter } from './media.router';
+import { socketsService } from '../service/sockets.service';
 
 export const apiRouter = Router();
 

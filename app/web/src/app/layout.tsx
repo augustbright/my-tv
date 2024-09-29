@@ -4,7 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Providers } from './Providers';
 import { queryCurrentUser } from './queries/currentUser';
 import { getQueryClient } from './queries/queryClient';
-import { AppHeader } from './AppHeader';
+import { AppHeader } from './_app-header/app-header';
 
 export const metadata = {
   title: 'Welcome to web',
