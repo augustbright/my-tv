@@ -25,31 +25,23 @@ mediaRouter.post(
     if (Array.isArray(file)) {
       file = file[0];
     }
-    const jobId = randomUUID();
-    mediaService
-      .upload(file, {
-        onProgress(percent) {
-          socketsService.sendToUser(req.user.uid, {
-            type: 'upload-progress',
-            jobId,
-            percent,
-          });
-        },
-      })
-      .then(() => {
-        socketsService.sendToUser(req.user.uid, {
-          type: 'upload-finished',
-          jobId,
-        });
-      })
-      .catch((error) => {
-        socketsService.sendToUser(req.user.uid, {
-          type: 'upload-error',
-          jobId,
-          error: error.message,
-        });
-        throw error;
-      });
-    res.send({ jobId });
+    const video = await mediaService.upload(file, {
+      author: req.user,
+    });
+    // .then(() => {
+    //   socketsService.sendToUser(req.user.uid, {
+    //     type: 'upload-finished',
+    //     jobId,
+    //   });
+    // })
+    // .catch((error) => {
+    //   socketsService.sendToUser(req.user.uid, {
+    //     type: 'upload-error',
+    //     jobId,
+    //     error: error.message,
+    //   });
+    //   throw error;
+    // });
+    res.send(video);
   }
 );

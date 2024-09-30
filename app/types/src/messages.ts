@@ -1,3 +1,4 @@
+import { Video } from '@prisma/client';
 export type TMessage =
   | {
       type: 'dummy-notification';
@@ -5,15 +6,15 @@ export type TMessage =
     }
   | {
       type: 'upload-progress';
-      jobId: string;
+      video: Video;
       percent: number;
     }
   | {
       type: 'upload-finished';
-      jobId: string;
+      video: Video;
     }
   | {
       type: 'upload-error';
-      jobId: string;
+      video: Video;
       error: string;
     };

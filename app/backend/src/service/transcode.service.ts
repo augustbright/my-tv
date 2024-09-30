@@ -1,5 +1,6 @@
 import ffmpeg from 'fluent-ffmpeg';
 import { writeFile } from 'fs/promises';
+import { fsService } from './fs.service';
 
 const resolutions = [
   // {
@@ -38,13 +39,22 @@ type TConfig = {
 
 async function transcodeForStreaming(
   inputPath: string,
-  { outputFolder, onProgress, filename }: TConfig
+  { outputFolder: outputDir, onProgress, filename }: TConfig
 ) {
+  const videoFolder = 'video';
+  const thumbnailsFolder = 'thumbnails';
   const percents = Array(resolutions.length).fill(0);
+  const videoOutputFolder = await fsService.ensureDir(
+    `${outputDir}${videoFolder}/`
+  );
+  const thumbnailOutputFolder = await fsService.ensureDir(
+    `${outputDir}${thumbnailsFolder}/`
+  );
+
   const transcodedFiles = Promise.all(
     resolutions.map((resolution, index) => {
       return new Promise<string>((resolve, reject) => {
-        const output = `${outputFolder}${filename}_${resolution.resolution}.m3u8`;
+        const output = `${videoOutputFolder}${filename}_${resolution.resolution}.m3u8`;
 
         ffmpeg(inputPath)
           .outputOptions([
@@ -55,7 +65,7 @@ async function transcodeForStreaming(
             `-strict -2`, // Allow non-strict standards for AAC
             `-hls_time 10`, // Split into 10-second segments for HLS
             `-hls_playlist_type vod`, // VOD playlist type
-            `-hls_segment_filename ${outputFolder}${filename}_${resolution.resolution}_segment_%03d.ts`, // Segment filename pattern
+            `-hls_segment_filename ${videoOutputFolder}${filename}_${resolution.resolution}_segment_%03d.ts`, // Segment filename pattern
           ])
           .output(output)
           .on('end', () => {
@@ -93,13 +103,16 @@ async function transcodeForStreaming(
       })
       .thumbnail({
         count: thumbnailsCount,
-        filename: `${outputFolder}${filename}_thumbnail.png`,
+        filename: `${thumbnailOutputFolder}${filename}_thumbnail.png`,
         size: '1280x720',
       });
   });
 
+  await transcodedFiles;
+
   // Create a master.m3u8 file
-  const masterPlaylist = `${outputFolder}${filename}_master.m3u8`;
+  const masterName = `${filename}_master.m3u8`;
+  const masterPlaylist = `${videoOutputFolder}${masterName}`;
   const streamFilesContent = resolutions.map((resolution) => {
     return `#EXT-X-STREAM-INF:BANDWIDTH=${resolution.bandwidth},RESOLUTION=${resolution.size}\n${filename}_${resolution.resolution}.m3u8`;
   });
@@ -108,13 +121,9 @@ async function transcodeForStreaming(
   await writeFile(masterPlaylist, masterPlaylistContent);
 
   return {
-    transcodedFiles: await transcodedFiles,
-    masterPlaylist,
-    thumbnails: Array(thumbnailsCount)
-      .fill(null)
-      .map(
-        (_, index) => `${outputFolder}${filename}_thumbnail_${index + 1}.png`
-      ),
+    videoFolder,
+    thumbnailsFolder,
+    masterName,
   };
 }
 

@@ -10,6 +10,7 @@ import { apiRouter } from './api';
 import cookieParser from 'cookie-parser';
 import { verifySessionMiddleware } from './middleware/verify-session';
 import { socketsService } from './service/sockets.service';
+import { prisma } from './service/prisma.service';
 
 const port = getEnvVar('SERVICE_BACKEND_PORT');
 const hostname = getEnvVar('SERVICE_BACKEND_HOSTNAME');
@@ -36,3 +37,10 @@ const server = app.listen(port, () => {
   console.log(`Listening at http://${hostname}:${port}/${globalPrefix}`);
 });
 server.on('error', console.error);
+
+process.on('SIGTERM', () => {
+  console.log('SIGTERM signal received: closing HTTP server');
+  server.close(() => {
+    console.log('HTTP server closed');
+  });
+});
