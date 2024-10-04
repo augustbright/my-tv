@@ -1,8 +1,6 @@
 'use client';
 
 import { useQueryMyMedia } from '@/app/queries/myMedia';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -12,22 +10,12 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
-  TableLoader,
   TableRow,
 } from '@/components/ui/table';
-import { Loader, MoreHorizontal } from 'lucide-react';
 import { ContentRow } from './content-row';
 
 export const MyContent = () => {
@@ -37,7 +25,7 @@ export const MyContent = () => {
       <CardHeader>
         <CardTitle>My Content</CardTitle>
         <CardDescription>
-          Manage your videos and view their status``.
+          Manage your videos and view their status.
         </CardDescription>
       </CardHeader>
       <CardContent>
