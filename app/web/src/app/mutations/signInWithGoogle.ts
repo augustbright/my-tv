@@ -5,7 +5,7 @@ import {
   UserCredential,
 } from 'firebase/auth';
 import { auth } from '../firebase';
-import { API, apiClient } from '../api';
+import { API, getApiClient } from '../api';
 import { getQueryClient } from '../queries/queryClient';
 import { KEY } from '../queries/keys';
 
@@ -18,6 +18,7 @@ export const mutateSignInWithGoogle =
     mutationFn: async () => {
       const userCredential = await signInWithPopup(auth, googleProvider);
       const idToken = await userCredential.user.getIdToken();
+      const apiClient = await getApiClient();
       await apiClient.post(API.sessionLogin(), { idToken });
 
       getQueryClient().invalidateQueries({

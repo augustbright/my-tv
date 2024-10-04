@@ -7,4 +7,7 @@ export const API = {
   signOut: () => API.user('/sign-out'),
   currentUser: () => API.user('/current'),
   uploadMedia: () => API.media('/upload'),
+  updateMedia: (id: string) => API.media(`/${id}`),
+  myMedia: () => API.media('/my'),
+  videoForEditing: (id: string) => API.media(`/edit/${id}`),
 };

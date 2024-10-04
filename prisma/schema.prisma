@@ -17,7 +17,7 @@ enum VideoStatus {
   PROCESSING
   ERROR
   DRAFT
-  PUBLISHED
+  READY
   DELETED
 }
 
@@ -29,5 +29,8 @@ model Video {
   description String?
   status      VideoStatus @default(PROCESSING)
   authorId    String
-  location    Json?
+
+  thumbnailUrl String?
+  masterUrl    String?
+  folder       String?
 }

@@ -2,6 +2,8 @@ import { isServer } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { TMessage } from 'types';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
+import { getQueryClient } from './queries/queryClient';
+import { KEY } from './queries/keys';
 
 function clientOnly(target: WS, key: string, descriptor: PropertyDescriptor) {
   const original = descriptor.value;
@@ -43,6 +45,13 @@ class WS {
         switch (message.type) {
           case 'dummy-notification':
             toast(message.message);
+            break;
+          case 'upload-finished':
+            getQueryClient().invalidateQueries({ queryKey: KEY.MY_MEDIA });
+            getQueryClient().invalidateQueries({
+              queryKey: KEY.VIDEO(message.video.id),
+            });
+            break;
         }
         console.log("Received: '" + e.data + "'");
       }

@@ -1,6 +1,6 @@
 import { ProfileHeader } from './profile-header';
 import { ProfileSidebar } from './profile-sidebar';
-import { Guard } from '@/components/Guard';
+import { Guard } from '@/components/guard';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

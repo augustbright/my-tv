@@ -54,7 +54,7 @@ async function transcodeForStreaming(
   const transcodedFiles = Promise.all(
     resolutions.map((resolution, index) => {
       return new Promise<string>((resolve, reject) => {
-        const output = `${videoOutputFolder}${filename}_${resolution.resolution}.m3u8`;
+        const output = `${videoOutputFolder}${filename}_${resolution.resolution}_variant.m3u8`;
 
         ffmpeg(inputPath)
           .outputOptions([
@@ -114,7 +114,7 @@ async function transcodeForStreaming(
   const masterName = `${filename}_master.m3u8`;
   const masterPlaylist = `${videoOutputFolder}${masterName}`;
   const streamFilesContent = resolutions.map((resolution) => {
-    return `#EXT-X-STREAM-INF:BANDWIDTH=${resolution.bandwidth},RESOLUTION=${resolution.size}\n${filename}_${resolution.resolution}.m3u8`;
+    return `#EXT-X-STREAM-INF:BANDWIDTH=${resolution.bandwidth},RESOLUTION=${resolution.size}\ntranscoded/${filename}/${videoFolder}/${filename}_${resolution.resolution}_variant.m3u8`;
   });
   const streamFiles = streamFilesContent.join('\n');
   const masterPlaylistContent = `#EXTM3U\n${streamFiles}`;

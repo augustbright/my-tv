@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/Dialog';
+} from '@/components/ui/dialog';
 import { AlertCircle, Plus, Upload, Loader } from 'lucide-react';
 import { ChangeEvent } from 'react';
 import { useMutateUploadMedia } from '../mutations/uploadMedia';

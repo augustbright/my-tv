@@ -10,7 +10,6 @@ import { apiRouter } from './api';
 import cookieParser from 'cookie-parser';
 import { verifySessionMiddleware } from './middleware/verify-session';
 import { socketsService } from './service/sockets.service';
-import { prisma } from './service/prisma.service';
 
 const port = getEnvVar('SERVICE_BACKEND_PORT');
 const hostname = getEnvVar('SERVICE_BACKEND_HOSTNAME');

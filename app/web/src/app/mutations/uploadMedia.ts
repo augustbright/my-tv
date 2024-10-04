@@ -1,5 +1,7 @@
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
-import { API, apiClient } from '../api';
+import { API, getApiClient } from '../api';
+import { getQueryClient } from '../queries/queryClient';
+import { KEY } from '../queries/keys';
 
 const validateMediaFile = (media: File) => {
   if (media.size > 50 * 1024 * 1024) {
@@ -27,7 +29,11 @@ export const mutateUploadMedia = (): UseMutationOptions<
 
     formData.append('file', file, file.name);
 
+    const apiClient = await getApiClient();
     const result = await apiClient.post(API.uploadMedia(), formData);
+    getQueryClient().invalidateQueries({
+      queryKey: KEY.MY_MEDIA,
+    });
     return result;
   },
 });

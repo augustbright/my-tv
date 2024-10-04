@@ -1,19 +1,13 @@
-import { isServer, FetchQueryOptions, useQuery } from '@tanstack/react-query';
-import { apiClient, API } from '../api';
-import { AxiosRequestConfig } from 'axios';
+import { FetchQueryOptions, useQuery } from '@tanstack/react-query';
+import { API, getApiClient } from '../api';
 import { KEY } from './keys';
 import { TUser } from 'types';
 
 export const queryCurrentUser = (): FetchQueryOptions<TUser> => ({
   queryKey: KEY.CURRENT_USER,
   queryFn: async () => {
-    let headers: AxiosRequestConfig | undefined;
-    if (isServer) {
-      const { headers: getHeaders } = await import('next/headers');
-      headers = getHeaders() as AxiosRequestConfig;
-    }
-
-    const { data } = await apiClient.get(API.currentUser(), headers);
+    const apiClient = await getApiClient();
+    const { data } = await apiClient.get(API.currentUser());
     return data;
   },
 });

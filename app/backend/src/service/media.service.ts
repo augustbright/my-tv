@@ -5,7 +5,7 @@ import { getEnvVar } from 'server-utils';
 import { randomUUID } from 'crypto';
 import { transcodeService } from './transcode.service';
 import { prisma } from './prisma.service';
-import { TUser } from 'types';
+import { TUpdateVideoDto, TUser, TVideoForEditingDto } from 'types';
 import { socketsService } from './sockets.service';
 import { Video } from '@prisma/client';
 
@@ -31,6 +31,46 @@ export const mediaService = {
     processVideo(file, video);
     return video;
   },
+
+  async patch(id: string, data: TUpdateVideoDto) {
+    return prisma.video.update({
+      where: {
+        id,
+      },
+      data: {
+        description: data.description,
+        title: data.title,
+        status: data.publish ? 'PUBLISHED' : 'DRAFT',
+      },
+    });
+  },
+
+  async getUserMedia(user: TUser) {
+    return prisma.video.findMany({
+      where: {
+        authorId: user.uid,
+      },
+    });
+  },
+
+  async getMediaForEditingById(id: string): Promise<TVideoForEditingDto> {
+    const video = await prisma.video.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    const [thumbnails] = await storage.bucket(bucketName).getFiles({
+      prefix: `transcoded/${video.folder}/thumbnails/`,
+    });
+
+    const thumbnailUrls = thumbnails.map((thumbnail) => thumbnail.publicUrl());
+
+    return {
+      ...video,
+      thumbnails: thumbnailUrls,
+    };
+  },
 };
 
 async function processVideo(file, video: Video) {
@@ -38,8 +78,23 @@ async function processVideo(file, video: Video) {
     const filename = `${randomUUID()}_${file.name}`;
     const outputFolder = `${rootOutputFolder}${filename}/`;
 
+    async function getManyFiles(folder, ending) {
+      const allFiles = await fs.readdir(`${outputFolder}${folder}`);
+      return allFiles
+        .map((file) => `${outputFolder}${folder}/${file}`)
+        .filter((file) => file.endsWith(ending));
+    }
+
+    async function uploadManyFiles(files) {
+      return await transferManager.uploadManyFiles(files, {
+        customDestinationBuilder(path) {
+          const relPath = path.split(outputFolder).at(-1);
+          return `transcoded/${filename}/${relPath}`;
+        },
+      });
+    }
+
     const tempFilePath = file.tempFilePath;
-    await fs.rename(file.tempFilePath, tempFilePath);
     const transcoded = await transcodeService.transcode(tempFilePath, {
       onProgress: (percent) => {
         socketsService.sendToUser(video.authorId, {
@@ -48,19 +103,28 @@ async function processVideo(file, video: Video) {
           percent,
         });
       },
-      outputFolder: `${outputFolder}`,
+      outputFolder,
       filename,
     });
-    await transferManager.uploadManyFiles(outputFolder, {
-      customDestinationBuilder(path) {
-        const relPath = path.split(outputFolder).at(-1);
-        return `transcoded/${filename}/${relPath}`;
-      },
-    });
 
-    const thumbnailsGSUrl = `gs://${bucketName}/transcoded/${filename}/${transcoded.thumbnailsFolder}`;
-    const videoGSUrl = `gs://${bucketName}/transcoded/${filename}/${transcoded.videoFolder}`;
-    const masterGsUrl = `gs://${bucketName}/transcoded/${filename}/${transcoded.videoFolder}/${transcoded.masterName}`;
+    const videoVariantFiles = await getManyFiles(
+      transcoded.videoFolder,
+      '_variant.m3u8'
+    );
+    const videoPartsFiles = await getManyFiles(transcoded.videoFolder, '.ts');
+    const videoMasterFiles = await getManyFiles(
+      transcoded.videoFolder,
+      '_master.m3u8'
+    );
+    const allThumbnailFiles = await getManyFiles(
+      transcoded.thumbnailsFolder,
+      '.png'
+    );
+
+    await uploadManyFiles(videoVariantFiles);
+    await uploadManyFiles(videoPartsFiles);
+    const [uploadedMasters] = await uploadManyFiles(videoMasterFiles);
+    const [uploadedThumbnails] = await uploadManyFiles(allThumbnailFiles);
 
     await prisma.video.update({
       where: {
@@ -68,11 +132,9 @@ async function processVideo(file, video: Video) {
       },
       data: {
         status: 'DRAFT',
-        location: {
-          thumbnailsGSUrl,
-          videoGSUrl,
-          masterGsUrl,
-        },
+        masterUrl: uploadedMasters[0].publicUrl(),
+        thumbnailUrl: uploadedThumbnails[0].publicUrl(),
+        folder: filename,
       },
     });
 

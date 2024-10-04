@@ -1,8 +1,7 @@
 import { Router } from 'express';
 import { mediaService } from '../service/media.service';
 import fileUpload from 'express-fileupload';
-import { randomUUID } from 'crypto';
-import { socketsService } from '../service/sockets.service';
+import { guard } from '../middleware/guard';
 
 export const mediaRouter = Router();
 
@@ -28,20 +27,23 @@ mediaRouter.post(
     const video = await mediaService.upload(file, {
       author: req.user,
     });
-    // .then(() => {
-    //   socketsService.sendToUser(req.user.uid, {
-    //     type: 'upload-finished',
-    //     jobId,
-    //   });
-    // })
-    // .catch((error) => {
-    //   socketsService.sendToUser(req.user.uid, {
-    //     type: 'upload-error',
-    //     jobId,
-    //     error: error.message,
-    //   });
-    //   throw error;
-    // });
     res.send(video);
   }
 );
+
+mediaRouter.get('/my', guard(), async (req, res) => {
+  const myMedia = await mediaService.getUserMedia(req.user);
+  res.json({
+    data: myMedia,
+  });
+});
+
+mediaRouter.get('/edit/:id', guard(), async (req, res) => {
+  const video = await mediaService.getMediaForEditingById(req.params.id);
+  res.json(video);
+});
+
+mediaRouter.patch('/:id', guard(), async (req, res) => {
+  const video = await mediaService.patch(req.params.id, req.body);
+  res.json(video);
+});
