@@ -6,8 +6,8 @@ import {
 } from 'firebase/auth';
 import { auth } from '../firebase';
 import { API, getApiClient } from '../api';
-import { getQueryClient } from '../queries/queryClient';
-import { KEY } from '../queries/keys';
+import { getQueryClient } from '@/queries/queryClient';
+import { KEY } from '@/queries/keys';
 
 const googleProvider = new GoogleAuthProvider();
 googleProvider.addScope('profile');

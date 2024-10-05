@@ -1,4 +1,3 @@
-import { UploadedFile } from 'express-fileupload';
 import fs from 'fs/promises';
 import { Storage, TransferManager } from '@google-cloud/storage';
 import { getEnvVar } from 'server-utils';
@@ -7,6 +6,7 @@ import { transcodeService } from './transcode.service';
 import { prisma } from './prisma.service';
 import { TUpdateVideoDto, TUser, TVideoForEditingDto } from 'types';
 import { socketsService } from './sockets.service';
+import { UploadedFile } from 'express-fileupload';
 import { Video } from '@prisma/client';
 
 const storage = new Storage();
@@ -20,6 +20,13 @@ type TUploadMediaParams = {
 };
 
 export const mediaService = {
+  async getMediaById(id: string) {
+    return prisma.video.findUnique({
+      where: {
+        id,
+      },
+    });
+  },
   async upload(file: UploadedFile, config: TUploadMediaParams) {
     const video = await prisma.video.create({
       data: {

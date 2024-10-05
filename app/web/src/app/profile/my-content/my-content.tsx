@@ -1,6 +1,6 @@
 'use client';
 
-import { useQueryMyMedia } from '@/app/queries/myMedia';
+import { useQueryMyMedia } from '@/queries/myMedia';
 import {
   Card,
   CardContent,

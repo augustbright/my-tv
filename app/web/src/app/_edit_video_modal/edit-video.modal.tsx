@@ -1,7 +1,7 @@
 'use client';
 import { Dialog } from '@/components/ui/dialog';
 import { atom, useAtom } from 'jotai';
-import { useQueryVideoForEditing } from '../queries/videoForEditing';
+import { useQueryVideoForEditing } from '@/queries/videoForEditing';
 import { EditVideoForm } from './edit-video-form';
 
 export const editedVideoIdAtom = atom<string | null>(null);

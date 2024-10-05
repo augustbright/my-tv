@@ -1,5 +1,5 @@
 import { UndefinedInitialDataOptions, useQuery } from '@tanstack/react-query';
-import { getApiClient, API } from '../api';
+import { getApiClient, API } from '@/api';
 import { KEY } from './keys';
 import { TVideoForEditingDto } from 'types';
 

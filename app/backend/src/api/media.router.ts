@@ -38,6 +38,10 @@ mediaRouter.get('/my', guard(), async (req, res) => {
   });
 });
 
+mediaRouter.get('/:id', async (req, res) => {
+  res.json(await mediaService.getMediaById(req.params.id));
+});
+
 mediaRouter.get('/edit/:id', guard(), async (req, res) => {
   const video = await mediaService.getMediaForEditingById(req.params.id);
   res.json(video);

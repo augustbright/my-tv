@@ -2,8 +2,8 @@ import { isServer } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { TMessage } from 'types';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
-import { getQueryClient } from './queries/queryClient';
-import { KEY } from './queries/keys';
+import { KEY } from '@/queries/keys';
+import { getQueryClient } from '@/queries/queryClient';
 
 function clientOnly(target: WS, key: string, descriptor: PropertyDescriptor) {
   const original = descriptor.value;

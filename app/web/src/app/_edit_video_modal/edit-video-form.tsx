@@ -29,10 +29,8 @@ import { Switch } from '@/components/ui/switch';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TVideoForEditingDto } from 'types';
-import Image from 'next/image';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ChevronLeft, ChevronRight, Loader, Save } from 'lucide-react';
-import { useMutateUpdateMedia } from '../mutations/updateVideo';
+import { Loader, Save } from 'lucide-react';
+import { useMutateUpdateMedia } from '@/mutations/updateVideo';
 import { toast } from 'react-toastify';
 import { useAtom } from 'jotai';
 import { editedVideoIdAtom } from './edit-video.modal';
@@ -52,7 +50,8 @@ const formSchema = z.object({
 export const EditVideoForm = ({ video }: { video: TVideoForEditingDto }) => {
   const [, setVideoId] = useAtom(editedVideoIdAtom);
   const playerRef = useRef<HTMLVideoElement>(null);
-  const {mutateAsync: updateVideo, isPending: isUpdatingVideo} = useMutateUpdateMedia();
+  const { mutateAsync: updateVideo, isPending: isUpdatingVideo } =
+    useMutateUpdateMedia();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -60,9 +59,8 @@ export const EditVideoForm = ({ video }: { video: TVideoForEditingDto }) => {
       description: video.description ?? '',
       publish: video.status === 'PUBLISHED',
     },
-    disabled: isUpdatingVideo
+    disabled: isUpdatingVideo,
   });
-
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
@@ -140,7 +138,7 @@ export const EditVideoForm = ({ video }: { video: TVideoForEditingDto }) => {
                 <FormField
                   control={form.control}
                   name="publish"
-                  render={({ field: {value, onChange, ...field} }) => (
+                  render={({ field: { value, onChange, ...field } }) => (
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">
@@ -173,12 +171,13 @@ export const EditVideoForm = ({ video }: { video: TVideoForEditingDto }) => {
               )}
               <div>
                 <div>
-                  <p className="text-sm text-gray-500">
-                    Link to the video
-                  </p>
+                  <p className="text-sm text-gray-500">Link to the video</p>
                 </div>
-                <Link href={`/v/${video.id}`} className='text-sm underline font-bold text-blue-600'>
-                {location.origin}/v/{video.id}
+                <Link
+                  href={`/v/${video.id}`}
+                  className="text-sm underline font-bold text-blue-600"
+                >
+                  {location.origin}/v/{video.id}
                 </Link>
               </div>
             </div>
@@ -189,7 +188,11 @@ export const EditVideoForm = ({ video }: { video: TVideoForEditingDto }) => {
               <Button variant="secondary">Cancel</Button>
             </DialogClose>
             <Button type="submit" variant="default" disabled={isUpdatingVideo}>
-              {isUpdatingVideo ? <Loader className='animate-spin mr-2' /> : <Save className='mr-2' />}
+              {isUpdatingVideo ? (
+                <Loader className="animate-spin mr-2" />
+              ) : (
+                <Save className="mr-2" />
+              )}
               <span>Save</span>
             </Button>
           </DialogFooter>

@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { AlertCircle, Plus, Upload, Loader } from 'lucide-react';
 import { ChangeEvent } from 'react';
-import { useMutateUploadMedia } from '../mutations/uploadMedia';
+import { useMutateUploadMedia } from '@/mutations/uploadMedia';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export const AppUploadButton = () => {

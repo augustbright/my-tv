@@ -1,5 +1,5 @@
 import { FetchQueryOptions, useQuery } from '@tanstack/react-query';
-import { API, getApiClient } from '../api';
+import { API, getApiClient } from '@/api';
 import { KEY } from './keys';
 import { TUser } from 'types';
 
